@@ -1,9 +1,7 @@
 const GAME_DIMENSION = 4;
-
 let stepCounter = 0;
 
 function setupEmptyTable() {
-
     const board = document.querySelector('#board');
     let slotCounter = 0;
 
@@ -31,7 +29,6 @@ function getRandomArray() {
 };
 
 function fillTable() {
-
     const slots = document.querySelectorAll('.slot');
     const currentNumbers = getRandomArray();
     
@@ -50,7 +47,6 @@ function fillTable() {
 };
 
 function cellClicked(event) {
-
     const clickedCell = event.currentTarget
 
     if (clickedCell.classList.contains('empty')) { return };
@@ -76,7 +72,6 @@ function cellClicked(event) {
     const downCell = document.getElementById(+clickedCell.id + GAME_DIMENSION)
     if (downCell && downCell.classList.contains('empty')) {
         switchSlots(clickedCell, downCell);
-        return
     };
 };
 

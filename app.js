@@ -1,4 +1,4 @@
-const GAME_DIMENSION = 4
+const GAME_DIMENSION = 4;
 
 let stepCounter = 0;
 
@@ -9,12 +9,15 @@ function setupEmptyTable() {
 
     for (r = 0; r < GAME_DIMENSION; r++) {
         for (c = 0; c < GAME_DIMENSION; c++) {
-            const slot = document.createElement('div');
-            slot.classList.add("slot");
-            slot.setAttribute('id', ++slotCounter);
-            slot.addEventListener('click', cellClicked)
+
             const cell = document.createElement('div');
             cell.classList.add('cell');
+            cell.setAttribute('id', ++slotCounter);
+            cell.addEventListener('click', cellClicked);
+            
+            const slot = document.createElement('div');
+            slot.classList.add("slot");
+            
             cell.appendChild(slot);
             board.append(cell);
         }
@@ -22,7 +25,7 @@ function setupEmptyTable() {
 }
 
 function getRandomArray() {
-    const ORDERED_ARRAY = Array.from(Array(GAME_DIMENSION*GAME_DIMENSION-1).keys(), n=>n+1)
+    const ORDERED_ARRAY = Array.from(Array(GAME_DIMENSION*GAME_DIMENSION-1).keys(), n=>n+1);
     const NUMBERS = [...ORDERED_ARRAY, ""].sort(() => Math.random() - 0.5);
     return NUMBERS
 };
@@ -31,14 +34,16 @@ function fillTable() {
 
     const slots = document.querySelectorAll('.slot');
     const currentNumbers = getRandomArray();
-
+    
     for (i = 0; i < slots.length; i++) {
-        slots[i].classList.remove('empty');
+
+        const cell = slots[i].parentNode;
+        cell.classList.remove('empty');
         const slot_value = currentNumbers.pop();
 
         if (slot_value) { slots[i].innerText = slot_value }
         else {
-            slots[i].classList.add("empty");
+            cell.classList.add("empty");
             slots[i].innerText = '';
         };
     };
@@ -46,41 +51,43 @@ function fillTable() {
 
 function cellClicked(event) {
 
-    const slot = event.target
+    const clickedCell = event.currentTarget
 
-    if (slot.classList.contains('empty')) { return }
+    if (clickedCell.classList.contains('empty')) { return }
 
-    const prev_item = document.getElementById(+slot.id - 1)
-    if (prev_item && prev_item.classList.contains('empty') && prev_item.id % GAME_DIMENSION != 0) {
-        switchSlots(slot, prev_item);
+    const leftCell = document.getElementById(+clickedCell.id - 1)
+    if (leftCell && leftCell.classList.contains('empty') && leftCell.id % GAME_DIMENSION != 0) {
+        switchSlots(clickedCell, leftCell);
         return
     }
 
-    const next_item = document.getElementById(+slot.id + 1)
-    if (next_item && next_item.classList.contains('empty') && slot.id % GAME_DIMENSION != 0) {
-        switchSlots(slot, next_item);
+    const rightCell = document.getElementById(+clickedCell.id + 1)
+    if (rightCell && rightCell.classList.contains('empty') && clickedCell.id % GAME_DIMENSION != 0) {
+        switchSlots(clickedCell, rightCell);
         return
     }
 
-    const up_item = document.getElementById(+slot.id - GAME_DIMENSION)
-    if (up_item && up_item.classList.contains('empty')) {
-        switchSlots(slot, up_item);
+    const up_cell = document.getElementById(+clickedCell.id - GAME_DIMENSION)
+    if (up_cell && up_cell.classList.contains('empty')) {
+        switchSlots(clickedCell, up_cell);
         return
     }
 
-    const down_item = document.getElementById(+slot.id + GAME_DIMENSION)
-    if (down_item && down_item.classList.contains('empty')) {
-        switchSlots(slot, down_item);
+    const down_cell = document.getElementById(+clickedCell.id + GAME_DIMENSION)
+    if (down_cell && down_cell.classList.contains('empty')) {
+        switchSlots(clickedCell, down_cell);
         return
     }
 }
 
-function switchSlots(clicked_slot, empty_slot) {
-    empty_slot.classList.remove("empty");
-    clicked_slot.classList.add("empty");
-    empty_slot.innerText = clicked_slot.innerText;
-    clicked_slot.innerText = '';
-    updateStepCounter(++stepCounter)
+function switchSlots(clicked_cell, empty_cell) {
+    empty_cell.classList.remove("empty");
+    clicked_cell.classList.add("empty");
+
+    empty_cell.firstElementChild.innerText = clicked_cell.firstElementChild.innerText;
+    clicked_cell.firstElementChild.innerText = '';
+
+    updateStepCounter(++stepCounter);
 }
 
 function updateStepCounter(value) {
@@ -91,7 +98,7 @@ function updateStepCounter(value) {
 function startNewGame() {
     fillTable();
     stepCounter = 0;
-    updateStepCounter(stepCounter)
+    updateStepCounter(stepCounter);
 }
 
 setupEmptyTable();

@@ -39,9 +39,9 @@ function fillTable() {
 
         const cell = slots[i].parentNode;
         cell.classList.remove('empty');
-        const slot_value = currentNumbers.pop();
+        const slotValue = currentNumbers.pop();
 
-        if (slot_value) { slots[i].innerText = slot_value }
+        if (slotValue) { slots[i].innerText = slotValue }
         else {
             cell.classList.add("empty");
             slots[i].innerText = '';
@@ -67,32 +67,32 @@ function cellClicked(event) {
         return
     };
 
-    const up_cell = document.getElementById(+clickedCell.id - GAME_DIMENSION)
-    if (up_cell && up_cell.classList.contains('empty')) {
-        switchSlots(clickedCell, up_cell);
+    const upCell = document.getElementById(+clickedCell.id - GAME_DIMENSION)
+    if (upCell && upCell.classList.contains('empty')) {
+        switchSlots(clickedCell, upCell);
         return
     };
 
-    const down_cell = document.getElementById(+clickedCell.id + GAME_DIMENSION)
-    if (down_cell && down_cell.classList.contains('empty')) {
-        switchSlots(clickedCell, down_cell);
+    const downCell = document.getElementById(+clickedCell.id + GAME_DIMENSION)
+    if (downCell && downCell.classList.contains('empty')) {
+        switchSlots(clickedCell, downCell);
         return
     };
 };
 
-function switchSlots(clicked_cell, empty_cell) {
-    empty_cell.classList.remove("empty");
-    clicked_cell.classList.add("empty");
+function switchSlots(clickedCell, emptyCell) {
+    emptyCell.classList.remove("empty");
+    clickedCell.classList.add("empty");
 
-    empty_cell.firstElementChild.innerText = clicked_cell.firstElementChild.innerText;
-    clicked_cell.firstElementChild.innerText = '';
+    emptyCell.firstElementChild.innerText = clickedCell.firstElementChild.innerText;
+    clickedCell.firstElementChild.innerText = '';
 
     updateStepCounter(++stepCounter);
 }
 
 function updateStepCounter(value) {
-    step_counter_value = document.getElementById('step_counter_value');
-    step_counter_value.innerText = value;
+    let stepCounterValue = document.getElementById('step_counter_value');
+    stepCounterValue.innerText = value;
 }
 
 function startNewGame() {

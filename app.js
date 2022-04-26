@@ -2,91 +2,104 @@ const GAME_DIMENSION = 4;
 let stepCounter = 0;
 
 function setupEmptyTable() {
-    const board = document.querySelector('#board');
+    const board = document.querySelector("#board");
     let slotCounter = 0;
 
     for (r = 0; r < GAME_DIMENSION; r++) {
         for (c = 0; c < GAME_DIMENSION; c++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cell.setAttribute("id", ++slotCounter);
+            cell.addEventListener("click", cellClicked);
 
-            const cell = document.createElement('div');
-            cell.classList.add('cell');
-            cell.setAttribute('id', ++slotCounter);
-            cell.addEventListener('click', cellClicked);
-            
-            const slot = document.createElement('div');
+            const slot = document.createElement("div");
             slot.classList.add("slot");
-            
+
             cell.appendChild(slot);
             board.append(cell);
-        };
-    };
-};
+        }
+    }
+}
 
 function getRandomArray() {
-    const ORDERED_ARRAY = Array.from(Array(GAME_DIMENSION*GAME_DIMENSION-1).keys(), n=>n+1);
+    const ORDERED_ARRAY = Array.from(
+        Array(GAME_DIMENSION * GAME_DIMENSION - 1).keys(),
+        (n) => n + 1
+    );
     const NUMBERS = [...ORDERED_ARRAY, ""].sort(() => Math.random() - 0.5);
-    return NUMBERS
-};
+    return NUMBERS;
+}
 
 function fillTable() {
-    const slots = document.querySelectorAll('.slot');
+    const slots = document.querySelectorAll(".slot");
     const currentNumbers = getRandomArray();
-    
-    for (i = 0; i < slots.length; i++) {
 
+    for (i = 0; i < slots.length; i++) {
         const cell = slots[i].parentNode;
-        cell.classList.remove('empty');
+        cell.classList.remove("empty");
         const slotValue = currentNumbers.pop();
 
-        if (slotValue) { slots[i].innerText = slotValue }
-        else {
+        if (slotValue) {
+            slots[i].innerText = slotValue;
+        } else {
             cell.classList.add("empty");
-            slots[i].innerText = '';
-        };
-    };
-};
+            slots[i].innerText = "";
+        }
+    }
+}
 
 function cellClicked(event) {
-    const clickedCell = event.currentTarget
+    const clickedCell = event.currentTarget;
 
-    if (clickedCell.classList.contains('empty')) { return };
+    if (clickedCell.classList.contains("empty")) {
+        return;
+    }
 
-    const leftCell = document.getElementById(+clickedCell.id - 1)
-    if (leftCell && leftCell.classList.contains('empty') && leftCell.id % GAME_DIMENSION != 0) {
+    const leftCell = document.getElementById(+clickedCell.id - 1);
+    if (
+        leftCell &&
+        leftCell.classList.contains("empty") &&
+        leftCell.id % GAME_DIMENSION != 0
+    ) {
         switchSlots(clickedCell, leftCell);
-        return
-    };
+        return;
+    }
 
-    const rightCell = document.getElementById(+clickedCell.id + 1)
-    if (rightCell && rightCell.classList.contains('empty') && clickedCell.id % GAME_DIMENSION != 0) {
+    const rightCell = document.getElementById(+clickedCell.id + 1);
+    if (
+        rightCell &&
+        rightCell.classList.contains("empty") &&
+        clickedCell.id % GAME_DIMENSION != 0
+    ) {
         switchSlots(clickedCell, rightCell);
-        return
-    };
+        return;
+    }
 
-    const upCell = document.getElementById(+clickedCell.id - GAME_DIMENSION)
-    if (upCell && upCell.classList.contains('empty')) {
+    const upCell = document.getElementById(+clickedCell.id - GAME_DIMENSION);
+    if (upCell && upCell.classList.contains("empty")) {
         switchSlots(clickedCell, upCell);
-        return
-    };
+        return;
+    }
 
-    const downCell = document.getElementById(+clickedCell.id + GAME_DIMENSION)
-    if (downCell && downCell.classList.contains('empty')) {
+    const downCell = document.getElementById(+clickedCell.id + GAME_DIMENSION);
+    if (downCell && downCell.classList.contains("empty")) {
         switchSlots(clickedCell, downCell);
-    };
-};
+    }
+}
 
 function switchSlots(clickedCell, emptyCell) {
     emptyCell.classList.remove("empty");
     clickedCell.classList.add("empty");
 
-    emptyCell.firstElementChild.innerText = clickedCell.firstElementChild.innerText;
-    clickedCell.firstElementChild.innerText = '';
+    emptyCell.firstElementChild.innerText =
+        clickedCell.firstElementChild.innerText;
+    clickedCell.firstElementChild.innerText = "";
 
     updateStepCounter(++stepCounter);
 }
 
 function updateStepCounter(value) {
-    let stepCounterValue = document.getElementById('step_counter_value');
+    let stepCounterValue = document.getElementById("step_counter_value");
     stepCounterValue.innerText = value;
 }
 

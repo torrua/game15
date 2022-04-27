@@ -1,4 +1,5 @@
 const GAME_DIMENSION = 4;
+const EMPTY_CLASS = "empty";
 let stepCounter = 0;
 
 function setupEmptyTable() {
@@ -36,13 +37,13 @@ function fillTable() {
 
     for (i = 0; i < slots.length; i++) {
         const cell = slots[i].parentNode;
-        cell.classList.remove("empty");
+        cell.classList.remove(EMPTY_CLASS);
         const slotValue = currentNumbers.pop();
 
         if (slotValue) {
             slots[i].innerText = slotValue;
         } else {
-            cell.classList.add("empty");
+            cell.classList.add(EMPTY_CLASS);
             slots[i].innerText = "";
         }
     }
@@ -51,14 +52,14 @@ function fillTable() {
 function cellClicked(event) {
     const clickedCell = event.currentTarget;
 
-    if (clickedCell.classList.contains("empty")) {
+    if (clickedCell.classList.contains(EMPTY_CLASS)) {
         return;
     }
 
     const leftCell = document.getElementById(+clickedCell.id - 1);
     if (
         leftCell &&
-        leftCell.classList.contains("empty") &&
+        leftCell.classList.contains(EMPTY_CLASS) &&
         leftCell.id % GAME_DIMENSION != 0
     ) {
         switchSlots(clickedCell, leftCell);
@@ -68,7 +69,7 @@ function cellClicked(event) {
     const rightCell = document.getElementById(+clickedCell.id + 1);
     if (
         rightCell &&
-        rightCell.classList.contains("empty") &&
+        rightCell.classList.contains(EMPTY_CLASS) &&
         clickedCell.id % GAME_DIMENSION != 0
     ) {
         switchSlots(clickedCell, rightCell);
@@ -76,20 +77,20 @@ function cellClicked(event) {
     }
 
     const upCell = document.getElementById(+clickedCell.id - GAME_DIMENSION);
-    if (upCell && upCell.classList.contains("empty")) {
+    if (upCell && upCell.classList.contains(EMPTY_CLASS)) {
         switchSlots(clickedCell, upCell);
         return;
     }
 
     const downCell = document.getElementById(+clickedCell.id + GAME_DIMENSION);
-    if (downCell && downCell.classList.contains("empty")) {
+    if (downCell && downCell.classList.contains(EMPTY_CLASS)) {
         switchSlots(clickedCell, downCell);
     }
 }
 
 function switchSlots(clickedCell, emptyCell) {
-    emptyCell.classList.remove("empty");
-    clickedCell.classList.add("empty");
+    emptyCell.classList.remove(EMPTY_CLASS);
+    clickedCell.classList.add(EMPTY_CLASS);
 
     emptyCell.firstElementChild.innerText =
         clickedCell.firstElementChild.innerText;

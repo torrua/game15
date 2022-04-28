@@ -4,21 +4,18 @@ let stepCounter = 0;
 
 function setupEmptyTable() {
     const board = document.querySelector("#board");
-    let slotCounter = 0;
 
-    for (r = 0; r < GAME_DIMENSION; r++) {
-        for (c = 0; c < GAME_DIMENSION; c++) {
-            const cell = document.createElement("div");
-            cell.classList.add("cell");
-            cell.setAttribute("id", ++slotCounter);
-            cell.addEventListener("click", cellClicked);
+    for (id = 1; id < GAME_DIMENSION * GAME_DIMENSION + 1; id++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.setAttribute("id", id);
+        cell.addEventListener("click", cellClicked);
 
-            const slot = document.createElement("div");
-            slot.classList.add("slot");
+        const slot = document.createElement("div");
+        slot.classList.add("slot");
 
-            cell.appendChild(slot);
-            board.append(cell);
-        }
+        cell.appendChild(slot);
+        board.append(cell);
     }
 }
 
@@ -32,26 +29,23 @@ function getRandomArray() {
 }
 
 function fillTable() {
-    const slots = document.querySelectorAll(".slot");
     const currentNumbers = getRandomArray();
-
-    for (i = 0; i < slots.length; i++) {
-        const cell = slots[i].parentNode;
+    document.querySelectorAll(".slot").forEach((slot) => {
+        const cell = slot.parentNode;
         cell.classList.remove(EMPTY_CLASS);
         const slotValue = currentNumbers.pop();
 
         if (slotValue) {
-            slots[i].innerText = slotValue;
+            slot.innerText = slotValue;
         } else {
             cell.classList.add(EMPTY_CLASS);
-            slots[i].innerText = "";
+            slot.innerText = "";
         }
-    }
+    });
 }
 
 function cellClicked(event) {
     const clickedCell = event.currentTarget;
-
     if (clickedCell.classList.contains(EMPTY_CLASS)) {
         return;
     }

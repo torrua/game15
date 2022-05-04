@@ -1,13 +1,25 @@
 const GAME_DIMENSION = 4;
 const EMPTY_CLASS = "empty";
+const GREEN_CLASS = "green";
+const WIN_CLASS = "win";
+const CELL_CLASS = "cell";
+
 let stepCounter = 0;
+
+const getRandomArray = () =>
+    ["", ...getOrderedArray()].sort(() => Math.random() - 0.5);
+
+const getOrderedArray = () =>
+    Array.from(Array(GAME_DIMENSION * GAME_DIMENSION).keys(), (n) => n + 1)
+        .reverse()
+        .slice(1);
 
 function setupEmptyTable() {
     const board = document.querySelector("#board");
 
     for (id = 1; id < GAME_DIMENSION * GAME_DIMENSION + 1; id++) {
         const cell = document.createElement("div");
-        cell.classList.add("cell");
+        cell.classList.add(CELL_CLASS);
         cell.setAttribute("id", id);
         cell.addEventListener("click", cellClicked);
 
@@ -19,84 +31,108 @@ function setupEmptyTable() {
     }
 }
 
-function getRandomArray() {
-    const ORDERED_ARRAY = Array.from(
-        Array(GAME_DIMENSION * GAME_DIMENSION - 1).keys(),
-        (n) => n + 1
-    );
-    const NUMBERS = [...ORDERED_ARRAY, ""].sort(() => Math.random() - 0.5);
-    return NUMBERS;
-}
-
 function fillTable() {
     const currentNumbers = getRandomArray();
-    document.querySelectorAll(".slot").forEach((slot) => {
-        const cell = slot.parentNode;
+    document.querySelectorAll(`.${CELL_CLASS}`).forEach((cell) => {
         cell.classList.remove(EMPTY_CLASS);
-        const slotValue = currentNumbers.pop();
+        cell.classList.remove(WIN_CLASS);
 
-        if (slotValue) {
-            slot.innerText = slotValue;
-        } else {
-            cell.classList.add(EMPTY_CLASS);
-            slot.innerText = "";
-        }
+        cell.firstElementChild.innerText = currentNumbers.pop();
+        if (!cell.firstElementChild.innerText) cell.classList.add(EMPTY_CLASS);
+
+        makeCellGreen(cell);
     });
 }
 
 function cellClicked(event) {
     const clickedCell = event.currentTarget;
-    if (clickedCell.classList.contains(EMPTY_CLASS)) {
+    let emptyCell = null;
+
+    if (
+        clickedCell.classList.contains(EMPTY_CLASS) ||
+        clickedCell.classList.contains(WIN_CLASS)
+    ) {
         return;
     }
 
     const leftCell = document.getElementById(+clickedCell.id - 1);
+    const rightCell = document.getElementById(+clickedCell.id + 1);
+    const upCell = document.getElementById(+clickedCell.id - GAME_DIMENSION);
+    const downCell = document.getElementById(+clickedCell.id + GAME_DIMENSION);
+
     if (
         leftCell &&
         leftCell.classList.contains(EMPTY_CLASS) &&
         leftCell.id % GAME_DIMENSION != 0
     ) {
-        switchSlots(clickedCell, leftCell);
-        return;
+        emptyCell = leftCell;
     }
 
-    const rightCell = document.getElementById(+clickedCell.id + 1);
     if (
         rightCell &&
         rightCell.classList.contains(EMPTY_CLASS) &&
         clickedCell.id % GAME_DIMENSION != 0
     ) {
-        switchSlots(clickedCell, rightCell);
-        return;
+        emptyCell = rightCell;
     }
 
-    const upCell = document.getElementById(+clickedCell.id - GAME_DIMENSION);
     if (upCell && upCell.classList.contains(EMPTY_CLASS)) {
-        switchSlots(clickedCell, upCell);
-        return;
+        emptyCell = upCell;
     }
 
-    const downCell = document.getElementById(+clickedCell.id + GAME_DIMENSION);
     if (downCell && downCell.classList.contains(EMPTY_CLASS)) {
-        switchSlots(clickedCell, downCell);
+        emptyCell = downCell;
+    }
+
+    if (emptyCell) {
+        switchSlots(clickedCell, emptyCell);
     }
 }
 
 function switchSlots(clickedCell, emptyCell) {
-    emptyCell.classList.remove(EMPTY_CLASS);
-    clickedCell.classList.add(EMPTY_CLASS);
+    emptyCell.classList.toggle(EMPTY_CLASS);
+    clickedCell.classList.toggle(EMPTY_CLASS);
 
     emptyCell.firstElementChild.innerText =
         clickedCell.firstElementChild.innerText;
     clickedCell.firstElementChild.innerText = "";
 
     updateStepCounter(++stepCounter);
+
+    checkFinishGame() ? finishGame() : makeCellGreen(emptyCell);
 }
 
-function updateStepCounter(value) {
-    let stepCounterValue = document.getElementById("step_counter_value");
-    stepCounterValue.innerText = value;
+function checkPlacesFromCurrentToFirst(cell) {
+    if (cell.id === cell.firstElementChild.innerText) {
+        if (cell.id === "1") return true;
+        return checkPlacesFromCurrentToFirst(
+            document.getElementById(+cell.id - 1)
+        );
+    }
+    return false;
 }
+
+function checkFinishGame() {
+    const lastCell = document.getElementById(
+        GAME_DIMENSION * GAME_DIMENSION - 1
+    );
+    return checkPlacesFromCurrentToFirst(lastCell);
+}
+
+function finishGame() {
+    document.querySelectorAll(`.${CELL_CLASS}`).forEach((cell) => {
+        cell.classList.add(WIN_CLASS);
+        cell.classList.remove(GREEN_CLASS);
+    });
+}
+
+const makeCellGreen = (cell) =>
+    cell.id === cell.firstElementChild.innerText
+        ? cell.classList.add(GREEN_CLASS)
+        : cell.classList.remove(GREEN_CLASS);
+
+const updateStepCounter = (value) =>
+    (document.querySelector("#step_counter_value").innerText = value);
 
 function startNewGame() {
     fillTable();

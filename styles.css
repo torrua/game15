@@ -31,6 +31,17 @@
     cursor: pointer;
 }
 
+.green:not(.empty) {
+    background: #bfeec0;
+    color: #29571e;
+}
+
+.win:not(.empty) {
+    background: #fffaad;
+    color: #df6329;
+    opacity: 0.5;
+}
+
 .cell:not(.empty):hover {
     opacity: 0.8;
 
